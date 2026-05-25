@@ -1,0 +1,80 @@
+# 🚛 Aicha Logistique — Guide de déploiement
+
+## Supabase — déjà configuré ✅
+- **URL** : https://pyfspbekddnuobdaxhwi.supabase.co
+- **Clés** : déjà intégrées dans js/supabase.js
+
+---
+
+## Étape 1 — Exécuter le SQL dans Supabase
+
+1. Aller sur https://supabase.com → ton projet
+2. SQL Editor → New Query
+3. Copier-coller le contenu de `SUPABASE_SQL.sql`
+4. Cliquer **Run**
+
+---
+
+## Étape 2 — Créer le bucket Storage
+
+1. Supabase Dashboard → **Storage** → **New Bucket**
+2. Nom : `recus`
+3. Public : **NON** (laisser privé)
+4. Storage → Policies → ajouter :
+   - Policy name: `Allow uploads`
+   - Allowed operation: INSERT
+   - Target roles: anon
+   - Policy definition: `true`
+
+---
+
+## Étape 3 — Créer ta première licence
+
+Dans Supabase → **Table Editor** → table `licences` → **Insert row** :
+
+| Champ | Valeur |
+|---|---|
+| cle | `AICHA-2025-001` |
+| nom_entreprise | `Aicha Logistique` |
+| actif | `true` |
+| date_expiration | `2026-12-31` |
+
+---
+
+## Étape 4 — Changer le PIN admin (IMPORTANT)
+
+Dans `js/supabase.js`, ligne ~60, chercher :
+```javascript
+const PIN_ADMIN = '1234';
+```
+Remplacer `1234` par un code secret à 4 chiffres.
+
+---
+
+## Étape 5 — Déployer sur Netlify
+
+1. https://netlify.com → **Add new site** → **Deploy manually**
+2. Glisser-déposer le dossier `aicha-logistique/`
+3. L'app est en ligne ! Partager l'URL aux conducteurs.
+
+---
+
+## Utilisation
+
+### Admin
+- Ouvrir l'app → entrer la licence → choisir **Admin** → entrer PIN admin
+- Ajouter les camions, ajouter les conducteurs (avec PIN à 4 chiffres chacun)
+- Tableau de bord : bilan par camion, toutes les courses, dépenses, demandes
+
+### Conducteur
+- Ouvrir l'app → entrer la licence (une seule fois, mémorisée)
+- Choisir **Conducteur** → entrer son PIN
+- Nouvelle course → Nouvelle dépense → Gérer les statuts
+
+---
+
+## Règles importantes
+- Photo obligatoire si dépense **> 500 000 FG**
+- Course **Payée** = verrouillée automatiquement
+- Pour modifier un élément verrouillé → demande à l'admin
+- L'admin approuve/refuse depuis son tableau de bord
